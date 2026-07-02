@@ -1,0 +1,21 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.23)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Debug)
+
+PROJECT(Shell)
+
+ADD_EXECUTABLE(csh)
+# csh = Chetan Shell BTW
+
+TARGET_INCLUDE_DIRECTORIES(csh
+  PRIVATE
+    src
+)
+
+TARGET_SOURCES(csh
+  PRIVATE
+    src/main.cpp
+    src/executor.cpp
+    src/lexer.cpp
+)

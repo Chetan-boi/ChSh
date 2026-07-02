@@ -67,3 +67,8 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+build/
+.DS_Store
+*.out
+*.dSYM/
+test/
