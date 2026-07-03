@@ -1,17 +1,15 @@
 #include "executor.hpp"
-// #include "lexer.hpp"
 #include <cstdlib>
 #include <string>
 #include <filesystem>
 #include <sys/wait.h>
 #include <vector>
 #include <iostream>
-#include <optional>
 #include <unistd.h>
 #include <sys/time.h>
 
 using Command = std::vector<std::string>;
-using Output = std::optional<std::string>;
+using Output = std::string;
 
 
 namespace ShellCommands {
@@ -27,15 +25,20 @@ namespace ShellCommands {
     }
   }
 
-  Output runBinary(const Command& command) {
+  int runBinary(const Command& command) {
     pid_t pid = fork();
-    if (pid == -1) return "Command fork failed, returned -1";
+    if (pid == -1) {
+      std::cout << "Command fork failed, returned -1";
+      return 1;
+    }
+    
     if (pid > 0) {
       int status {};
       waitpid(pid, &status, 0);
 
       if (WIFEXITED(status)) {
-        return "";
+        if (WEXITSTATUS(status)) return 1;
+        return 0;
       }
     }
    
@@ -50,40 +53,51 @@ namespace ShellCommands {
       execvp(args[0],args.data());
 
       perror("execvp");
+      std::cout << "Command Failed";
       exit(EXIT_FAILURE);
-
-      return "Command Failed";
     }
-    return std::nullopt;
+    return 1;
   }
 }
 
-std::optional<std::string> executeCommand(const std::vector<std::string>& command) {
-  if (command.empty()) return "Please Enter a command";
+int executeCommand(const std::vector<std::string>& command) {
+  if (command.empty()) {
+    std::cout << "Please Enter a command";
+    return 1;
+  }
+  
   auto commandType = command[0];
   static std::string prevDir;
   if (commandType == "cd") {
-
     if (command.size() == 1) {
-      if (prevDir.empty()) return "No Prev directory Found";
-      return ShellCommands::cd(prevDir,prevDir);
+      if (prevDir.empty()) {
+        std::cout << "No Prev directory Found";
+        return 1;
+      }
+      std::cout << ShellCommands::cd(prevDir,prevDir);
+      return 0;
     }
 
-    if (command[1] == "~") return ShellCommands::cd("/Users/chetan",prevDir);
+    if (command[1] == "~") {
+      std::cout << ShellCommands::cd("/Users/chetan",prevDir);
+      return 0;
+    }
 
-    return ShellCommands::cd(command[1],prevDir);
+    std::cout << ShellCommands::cd(command[1],prevDir);
+    return 0;
   }
 
   else if (commandType == "pwd") {
-    return std::filesystem::current_path();
+    std::cout << std::filesystem::current_path();
+    return 0;
   }
 
   else if (commandType == "exit") {
-    std::cout << "You typed exit\n";
-    return std::nullopt;
+    std::cout << "You typed exit\nByee!";
+    exit(0);
   }
 
   else {
-    
-    return ShellCommands::runBinary(command);  }
+   return ShellCommands::runBinary(command);
+  }
 }

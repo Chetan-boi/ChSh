@@ -30,10 +30,12 @@ std::string getCurrentDir() {
   return dir;
 }
 
-std::vector<std::string> getInput() {
+std::vector<std::string> getInput(bool prevCommandStatus) {
+  if (prevCommandStatus) std::cout << "\033[31m";
   std::cout << '['
             <<  getCurrentDir()
             << "] >> ";
+  if (prevCommandStatus) std::cout << "\033[0m";
 
   std::string enteredCommand;
   std::getline(std::cin,enteredCommand);

@@ -2,22 +2,21 @@
 #include "executor.hpp"
 #include <vector>
 #include <iostream>
-#include <optional>
 
 int main() {
+  bool prevCommandStatus = false;
   while(true) {
-    std::vector<std::string> parsedCommand = getInput();
+    std::vector<std::string> parsedCommand = getInput(prevCommandStatus);
 
-    std::optional<std::string> output = executeCommand(parsedCommand);
+    int commandStatus = executeCommand(parsedCommand);
 
-    if (!output.has_value()) {
-      std::cout << "Bye!";
-      return 0;
-    }
+    // Implement Exit in executor
 
-    std::cout << *output << '\n';
+    if (commandStatus == 1) prevCommandStatus = true;
+    if (commandStatus == 0) prevCommandStatus = false;
 
-    std::cout << std::endl;
+    std::cout << '\n' << std::endl;
   }
+
   return 0;
 }

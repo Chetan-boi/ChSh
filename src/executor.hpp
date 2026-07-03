@@ -3,4 +3,4 @@
 #include <vector>
 #include <optional>
 
-std::optional<std::string> executeCommand(const std::vector<std::string>&);
+int executeCommand(const std::vector<std::string>&);
