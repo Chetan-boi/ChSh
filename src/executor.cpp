@@ -2,12 +2,16 @@
 // #include "lexer.hpp"
 #include <string>
 #include <filesystem>
+#include <sys/wait.h>
 #include <vector>
 #include <iostream>
 #include <optional>
+#include <unistd.h>
+#include <sys/time.h>
 
 using Command = std::vector<std::string>;
 using Output = std::optional<std::string>;
+
 
 namespace ShellCommands {
   Output cd(const std::string dir,std::string& prevDir) {
@@ -21,6 +25,32 @@ namespace ShellCommands {
       return e.what();
     }
   }
+
+  Output runBinary(const Command& command) {
+    pid_t pid = fork();
+    if (pid == -1) return "Command fork failed, returned -1";
+    if (pid > 0) {
+      int status {};
+      waitpid(pid, &status, 0);
+
+      if (WIFEXITED(status)) {
+        return "";
+      }
+    }
+   
+    std::vector<char*> args;
+  
+    for (const auto& arg : command) {
+      args.emplace_back(const_cast<char*>(arg.c_str()));
+    }
+  
+    args.emplace_back(nullptr);
+    execvp(args[0],args.data());
+
+    perror("execvp");
+
+    return "Command Failed";
+    }
 }
 
 std::optional<std::string> executeCommand(const std::vector<std::string>& command) {
@@ -48,6 +78,6 @@ std::optional<std::string> executeCommand(const std::vector<std::string>& comman
   }
 
   else {
-    return std::nullopt;
-  }
+    
+    return ShellCommands::runBinary(command);  }
 }
