@@ -40,12 +40,18 @@ std::vector<std::string> getInput() {
 
   std::string readWord;
   std::vector<std::string> parsedCommand;
+  bool isQuote = false;
   for (std::size_t i{};i<enteredCommand.length()+1;i++) {
     char c = enteredCommand[i];
     
-    if (c == ' ' || c == '\0') {
+    if ((c == ' ' || c == '\0') && !isQuote) {
       parsedCommand.emplace_back(readWord);
       readWord = "";
+      continue;
+    }
+    if (!c) continue;
+    if (c == '"') {
+      isQuote = !isQuote;
       continue;
     }
     readWord += c; 

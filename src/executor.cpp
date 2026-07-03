@@ -1,5 +1,6 @@
 #include "executor.hpp"
 // #include "lexer.hpp"
+#include <cstdlib>
 #include <string>
 #include <filesystem>
 #include <sys/wait.h>
@@ -38,22 +39,27 @@ namespace ShellCommands {
       }
     }
    
-    std::vector<char*> args;
+    if (pid == 0) {
+      std::vector<char*> args;
   
-    for (const auto& arg : command) {
-      args.emplace_back(const_cast<char*>(arg.c_str()));
-    }
+      for (const auto& arg : command) {
+        args.emplace_back(const_cast<char*>(arg.c_str()));
+      }
   
-    args.emplace_back(nullptr);
-    execvp(args[0],args.data());
+      args.emplace_back(nullptr);
+      execvp(args[0],args.data());
 
-    perror("execvp");
+      perror("execvp");
+      exit(EXIT_FAILURE);
 
-    return "Command Failed";
+      return "Command Failed";
     }
+    return std::nullopt;
+  }
 }
 
 std::optional<std::string> executeCommand(const std::vector<std::string>& command) {
+  if (command.empty()) return "Please Enter a command";
   auto commandType = command[0];
   static std::string prevDir;
   if (commandType == "cd") {
