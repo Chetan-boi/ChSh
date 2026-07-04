@@ -5,15 +5,15 @@ set(CMAKE_BUILD_TYPE Debug)
 
 PROJECT(Shell)
 
-ADD_EXECUTABLE(csh)
-# csh = Chetan Shell BTW
+ADD_EXECUTABLE(ChSh)
+# ChSh = Chetan Shell BTW
 
-TARGET_INCLUDE_DIRECTORIES(csh
+TARGET_INCLUDE_DIRECTORIES(ChSh
   PRIVATE
     src
 )
 
-TARGET_SOURCES(csh
+TARGET_SOURCES(ChSh
   PRIVATE
     src/main.cpp
     src/executor.cpp

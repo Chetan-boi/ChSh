@@ -47,8 +47,10 @@ std::vector<std::string> getInput(bool prevCommandStatus) {
     char c = enteredCommand[i];
     
     if ((c == ' ' || c == '\0') && !isQuote) {
-      parsedCommand.emplace_back(readWord);
-      readWord = "";
+      if (!readWord.empty()) {
+        parsedCommand.emplace_back(readWord);
+        readWord = "";
+      }
       continue;
     }
     if (!c) continue;
