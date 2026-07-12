@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+.idea/
 
 # Precompiled Headers
 *.gch
@@ -43,6 +44,13 @@
 build/
 Build/
 build-*/
+cmake-build-debug/
+
+# IDE/Project files
+.idea/
+Chara.png
+Icon?
+
 
 # CMake generated files
 CMakeFiles/

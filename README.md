@@ -17,6 +17,7 @@
     - `cd ~`: Navigate to the home directory.
     - `cd`: Acts as a toggle to switch back to the **previously visited directory**.
   - `pwd`: Prints the current absolute path of your working directory.
+  - `history`: Prints the list of successfully executed commands (stored in `~/.ChSh_history`).
   - `exit`: Safely quits the shell environment.
 - **📥 Output Redirection**:
   - `>`: Redirects output from any command, overwriting the destination file.
@@ -99,3 +100,11 @@ Once compiled successfully, run the generated binary:
 ```bash
 [~] >> mkdir "My Folder with Spaces"
 ```
+
+**Viewing Command History:**
+```bash
+[~] >> history
+cd Desktop/ChSh 
+ls -la 
+```
+
