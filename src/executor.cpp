@@ -1,5 +1,4 @@
 #include "executor.hpp"
-#include "lexer.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <filesystem>
@@ -17,13 +16,15 @@ using Output = std::string;
 using Directory = std::string;
 
 std::string command_output;
-bool shouldSave = false;
-bool wasSuccessfull = false;
+namespace {
+  bool shouldSave = false;
+  bool wasSuccessfull = false;
+}
 
 namespace ShellCommands {
   Output cd(const Directory dir, Directory &prevDir) {
     try {
-      auto temp = std::filesystem::current_path();
+      const auto temp = std::filesystem::current_path();
       std::filesystem::current_path(dir);
       prevDir = temp;
       return "Switched Dir";
@@ -106,7 +107,7 @@ namespace ShellCommands {
     return 1;
 }
 
-  int writeToFile(std::string FileName,std::string op) {
+  int writeToFile(const std::string& FileName,const std::string& op) {
 
     std::ofstream outputFile;
     if (op == ">>") {
@@ -198,7 +199,7 @@ int executeCommand(Command &command) {
     } else {
       std::cout << std::filesystem::current_path().string() << std::endl;
     }
-    wasSuccessfull = true;
+    wasSuccessfull = false;
   }
 
   else if (commandType == "exit") {
