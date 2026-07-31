@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
+#include <csignal>
 
 using Command = std::vector<std::string>;
 using Output = std::string;
@@ -79,6 +80,7 @@ namespace ShellCommands {
     }
 
     if (pid == 0) {
+      signal(SIGINT, SIG_DFL); // Kill the process not the shell
       std::vector<char *> args;
 
       for (const auto &arg : command) {

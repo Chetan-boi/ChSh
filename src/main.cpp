@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <csignal>
 
 std::string parsedToString(std::vector<std::string> args) {
   std::string temp;
@@ -17,6 +18,7 @@ std::string parsedToString(std::vector<std::string> args) {
   bool prevCommandStatus = false;
   std::ofstream outFile;
   outFile.open("/Users/chetan/.ChSh_history",std::ios::app);
+  signal(SIGINT,SIG_IGN); // Ignore SIGINT
   while(true) {
     std::vector<std::string> parsedCommand = getInput(prevCommandStatus);
 
