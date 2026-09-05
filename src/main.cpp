@@ -1,9 +1,14 @@
 #include "lexer.hpp"
 #include "executor.hpp"
+#include <cstdlib>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <csignal>
+
+namespace {
+  std::string home = std::getenv("HOME");
+}
 
 std::string parsedToString(std::vector<std::string> args) {
   std::string temp;
@@ -17,7 +22,7 @@ std::string parsedToString(std::vector<std::string> args) {
 [[noreturn]] int main() {
   bool prevCommandStatus = false;
   std::ofstream outFile;
-  outFile.open("/Users/chetan/.ChSh_history",std::ios::app);
+  outFile.open(home + "/.ChSh_history",std::ios::app);
   signal(SIGINT,SIG_IGN); // Ignore SIGINT
   while(true) {
     std::vector<std::string> parsedCommand = getInput(prevCommandStatus);
