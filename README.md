@@ -1,110 +1,80 @@
-# ChSh (Chetan Shell) 🐚
+# ChSh (Chetan Shell)
 
 `ChSh` is a lightweight, Unix-like command-line shell built from scratch in modern C++ (C++23). It parses inputs, manages directories, handles command executions, and supports redirection protocols using POSIX APIs.
 
 ---
 
-## ✨ Features
+## Features
 
-- **💡 Dynamic & Colored Prompt**: 
-  - Displays your current working directory with home directory (`/Users/chetan`) automatically prettified as `~`.
-  - Real-time visual feedback: The prompt turns **red** if the previous command returned an error/failed.
-- **🛠️ Command Execution**:
-  - Automatically forks processes and runs system binaries (e.g., `ls`, `grep`, `mkdir`, `top`) using `fork` and `execvp`.
-- **📂 Built-in Commands**:
-  - `cd`:
-    - `cd <path>`: Navigate to any target directory.
-    - `cd ~`: Navigate to the home directory.
-    - `cd`: Acts as a toggle to switch back to the **previously visited directory**.
-  - `pwd`: Prints the current absolute path of your working directory.
-  - `history`: Prints the list of successfully executed commands (stored in `~/.ChSh_history`).
-  - `exit`: Safely quits the shell environment.
-- **📥 Output Redirection**:
-  - `>`: Redirects output from any command, overwriting the destination file.
-  - `>>`: Redirects output from any command, appending to the destination file.
-- **🧠 Intelligent Lexer & Tokenizer**:
-  - Correctly parses arguments enclosed in double quotes (e.g., `"hello world"` is kept as a single argument).
+- **Process Execution:** Forks and executes external binaries via `execvp` with parent-process signal and exit-status monitoring.
+- **I/O Redirection:** Truncating (`>`) and appending (`>>`) output redirection handled via file descriptors (`dup2`).
+- **Quote-Aware Parsing:** Tokenizer preserves arguments enclosed in double quotes (e.g., `"hello world"`).
+- **Custom Built-ins:**
+  - `cd <path>`: Directory navigation (supports `~`).
+  - `cd`: Toggles between the current and previous directory (custom shortcut for `cd -`).
+  - `pwd`: Resolves working directory via `getcwd`.
+  - `history`: Lists successful executions persisted to `~/.ChSh_history`.
+  - `exit`: Clean shell termination.
+- **Status Prompt:** Shortens `$HOME` to `~` and updates color based on the previous command's exit code (green for `0`, red for non-zero).
 
 ---
 
-## 🏗️ Project Architecture
+## Architecture
 
 ```mermaid
 graph TD
-    A[main.cpp Loop] -->|1. Get input status| B(lexer.cpp - getInput)
-    B -->|2. Parse tokens / handle quotes| C[Command Vector]
-    C -->|3. Dispatch command| D(executor.cpp - executeCommand)
-    D -->|Built-in cd / pwd / exit| E[Internal State / Filesystem]
-    D -->|External Binaries| F[runBinary - fork & execvp]
-    F -->|Output Redirection > or >>| G[writeToFile]
+    A[REPL Loop - main.cpp] --> B[Lexer & Tokenizer - lexer.cpp]
+    B --> C[Token Vector]
+    C --> D{Executor - executor.cpp}
+    D -->|Built-in| E[Internal State / POSIX FS APIs]
+    D -->|External Binary| F[fork + execvp]
+    F -->|Redirection > or >>| G[dup2 / File Descriptors]
 ```
 
-### File Structure
+### File Tree
 
-- **[src/main.cpp](file:///Users/chetan/Desktop/ChSh/src/main.cpp)**: The main shell REPL loop managing state and flow control.
-- **[src/lexer.cpp](file:///Users/chetan/Desktop/ChSh/src/lexer.cpp)**: Standard inputs reader, prompt formatter (with color indicators), and argument parser.
-- **[src/executor.cpp](file:///Users/chetan/Desktop/ChSh/src/executor.cpp)**: Command router handling built-in directory navigation, redirection, and low-level child process management.
-- **[CMakeLists.txt](file:///Users/chetan/Desktop/ChSh/CMakeLists.txt)**: Cross-platform CMake configuration requiring C++23.
+- `src/main.cpp`: REPL entry point and signal flow.
+- `src/lexer.cpp`: Terminal input handler, prompt styling, and quote-aware tokenization.
+- `src/executor.cpp`: Command dispatch, built-in logic, I/O redirection, and child process management.
+- `CMakeLists.txt`: Build configuration requiring C++23.
 
 ---
 
-## 🚀 Getting Started
+## Building & Installation
 
-### Prerequisites
+### Requirements
 
-- A C++ compiler supporting C++23 (e.g., GCC 13+, Clang 16+, or Apple Clang).
-- [CMake](https://cmake.org/) (Version 3.23 or newer).
+- C++23 compliant compiler (Clang 16+, GCC 13+, or Apple Clang)
+- CMake 3.23+
 
-### Build Instructions
+```bash
+git clone https://github.com/Chetan-boi/ChSh.git
+cd ChSh
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone git@github.com:Chetan-boi/ChSh.git
-   cd ChSh
-   ```
+Run the binary:
 
-2. **Configure & Build using CMake:**
-   ```bash
-   cmake -B build -DCMAKE_BUILD_TYPE=Release
-   cmake --build build
-   ```
-
-### Running the Shell
-
-Once compiled successfully, run the generated binary:
 ```bash
 ./build/ChSh
 ```
 
 ---
 
-## 📝 Usage Examples
+## Examples
 
-**Changing Directories & Toggling:**
 ```bash
-[~] >> cd Desktop/ChSh
-[/Users/chetan/Desktop/ChSh] >> cd /var
+[~] >> mkdir "Target Directory"
+[~] >> cd "Target Directory"
+[~/Target Directory] >> cd /var
 [/var] >> cd
-# Toggles back to /Users/chetan/Desktop/ChSh
-[/Users/chetan/Desktop/ChSh] >> cd ~
-[~] >>
-```
-
-**Using Redirection:**
-```bash
-[~] >> ls -la > files_list.txt
-[~] >> echo "new log entry" >> logs.txt
-```
-
-**Handling Spaces in Arguments:**
-```bash
-[~] >> mkdir "My Folder with Spaces"
-```
-
-**Viewing Command History:**
-```bash
-[~] >> history
-cd Desktop/ChSh 
-ls -la 
+[~/Target Directory] >> ls -la > manifest.txt
+[~/Target Directory] >> history
+mkdir "Target Directory"
+cd "Target Directory"
+cd /var
+cd
+ls -la > manifest.txt
 ```
 
