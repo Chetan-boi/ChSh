@@ -12,6 +12,15 @@
 #include <vector>
 #include <csignal>
 
+// namespace {
+  // ParsedCommand parseRedirection(const std::vector<std::string>& tokens) {
+    // ParsedCommand cmd;
+    // for (size_t i = 0; i < tokens.size(); ++i) {
+
+    // }
+  // }
+// }
+
 using Command = std::vector<std::string>;
 using Output = std::string;
 using Directory = std::string;
