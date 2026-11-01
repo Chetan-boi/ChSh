@@ -5,17 +5,19 @@ set(CMAKE_BUILD_TYPE Debug)
 
 PROJECT(Shell)
 
+file(GLOB SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB HEADERS CONFIGURE_DEPENDS "include/*.hpp")
+
 ADD_EXECUTABLE(ChSh)
 # ChSh = Chetan Shell BTW
 
 TARGET_INCLUDE_DIRECTORIES(ChSh
   PRIVATE
-    src
+    include
 )
 
 TARGET_SOURCES(ChSh
   PRIVATE
-    src/main.cpp
-    src/executor.cpp
-    src/lexer.cpp
+    ${SOURCES}
+    ${HEADERS}
 )
